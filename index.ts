@@ -1,9 +1,18 @@
 const srv = Bun.serve({
     port: 3000,
     routes: {
-        "/" () => new Response("OI"),
+        "/": {
+             GET: (a) =>{
+                
+                const url = new URL(a.url)
+                const search = url. searchParams
+                const nome = search.get("nome")
+                console.log(nome)
+              return  new Response("OI"+ " " + nome)
+            },
+        },
     
-          "/test":{ 
+        "/test":{ 
             GET: (req) =>{
                 const url = new URL(req.url)
                 const search = url. searchParams
