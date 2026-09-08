@@ -1,7 +1,9 @@
 const srv = Bun.serve({
     port: 3000,
     routes: {
-        "/test":{ 
+        "/" () => new Response("OI"),
+    
+          "/test":{ 
             GET: (req) =>{
                 const url = new URL(req.url)
                 const search = url. searchParams
