@@ -8,8 +8,14 @@ const srv = Bun.serve({
                 const search = url. searchParams
                 const nome = search.get("nome")
                 console.log(nome)
-              return  new Response("OI"+ " " + nome)
+              return  new Response("OI "+ nome)
             },
+        },
+
+        "/pessoa/:id": {
+            GET: (req) => {
+            return new Response(` oi${req.params.id}`)
+          }
         },
     
         "/test":{ 
