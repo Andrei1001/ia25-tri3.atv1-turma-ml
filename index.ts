@@ -12,16 +12,14 @@ const srv = Bun.serve({
     port: 3000,
     routes: {
         "/user": {
-                 GET: (req) => {
-                const query = db.query(`
-                    SELECT * FROM users
-                `)
-                const deResp = query.all ()
+            GET: () => {
+                const query = db.query(`SELECT * FROM users`)
+                const deResp = query.all()
                 return Response.json(deResp)
             },
             
             POST: async (req) => {
-                const body = await req.body.json();
+                const body = await req.body?.json();
                 const query = db.query(`
                     INSERT INTO users(username, email, password_hash)
                     VALUES(:username, :email, :password_hash)    
@@ -49,8 +47,30 @@ const srv = Bun.serve({
                 return Response.json(deResp)
             },
 
-            PUT: () => Response.json("", { status: 501 }),
-            DELETE: () => Response.json("", { status: 501 }),
+            PUT: async (req) => {
+                const body = await req.body?.json();
+                  const query = db.query(`
+                    UPDATE users
+                    SET username=:username, email=:email, password_hash=:password_hash
+                    WHERE id=:_id_
+                `)
+                const dbResp = query.run({
+                    ':_id_': req.params.id,
+                    ':username': body.username,
+                    ':email' : body.email,
+                    ':password_hash':  body.password
+                })
+                return Response.json(dbResp)
+            },
+
+            DELETE: (req) => {
+                  const query = db.query(`
+                    DELETE FROM users
+                    WHERE id=:_id_
+                `)
+                const deResp = query.get({ ":_id_": req.params.id })
+                return Response.json(deResp)
+            }
         }
     }
 })
