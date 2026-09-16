@@ -1,40 +1,58 @@
+//           Banco de Dados   HTTP
+// [C]reate  insert           post
+// [R]ead    select           get
+// [U]pdate  update           put
+// [U]pdate  update           patch
+// [D]elete  delete           delete
+// 
+
+import { db } from "./db"
+
 const srv = Bun.serve({
     port: 3000,
     routes: {
-        "/": {
-             GET: (a) =>{
-                
-                const url = new URL(a.url)
-                const search = url. searchParams
-                const nome = search.get("nome")
-                console.log(nome)
-              return  new Response("OI "+ nome)
+        "/user": {
+                 GET: (req) => {
+                const query = db.query(`
+                    SELECT * FROM users
+                `)
+                const deResp = query.all ()
+                return Response.json(deResp)
             },
+            
+            POST: async (req) => {
+                const body = await req.body.json();
+                const query = db.query(`
+                    INSERT INTO users(username, email, password_hash)
+                    VALUES(:username, :email, :password_hash)    
+                `)
+                const dbResp = query.run({
+                    ':username': body.username,
+                    ':email' : body.email,
+                    ':password_hash':  body.password
+                })
+                return Response.json({
+                    "message": "deu bom",
+                    dbResp
+                })
+            },
+
         },
 
-        "/pessoa/:id": {
+        "/user/:id": {
             GET: (req) => {
-            return new Response(` oi${req.params.id}`)
-          }
-        },
-    
-        "/test":{ 
-            GET: (req) =>{
-                const url = new URL(req.url)
-                const search = url. searchParams
-                const nome = search.get("nome")
-                console.log(nome)
-              return  new Response("Pare de farmar aura!!!!!_GET")
+                const query = db.query(`
+                    SELECT * FROM users
+                    WHERE id=:_id_
+                `)
+                const deResp = query.get({ ":_id_": req.params.id })
+                return Response.json(deResp)
             },
-            POST: async (req) =>{
-                const body = await req.body?.text()
-                console.log(body)
-                return new Response("Pare de farmar aura!!!!!_POST")
-            },
-            PUT: () =>new Response("Pare de farmar aura!!!!!_PUT"),
-            DELETE: () =>new Response("Pare de farmar aura!!!!!_DELETE"),
+
+            PUT: () => Response.json("", { status: 501 }),
+            DELETE: () => Response.json("", { status: 501 }),
         }
     }
 })
 
-console.log(`Serevr Running:${srv.url} `)
+console.log(`Server running: ${srv.url}`)
