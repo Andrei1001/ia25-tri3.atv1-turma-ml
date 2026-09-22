@@ -62,15 +62,56 @@ const srv = Bun.serve({
             },
         },
 
-        "/coisa": {
-            GET: () => Response.json({}, { status: 501 }),
-            POST: () => Response.json({}, { status: 501 }),
+        "/mensagem": {
+             GET: () => {
+                const query2 = db.query(`SELECT * FROM mensagem`)
+                const data = query2.all()
+                return Response.json(data)
+            },
+
+            POST: async (req) => {
+                const body = await req.body.json()
+                const query2 = db.query(`
+                    INSERT INTO mensagem(texto, remetente, data)
+                    VALUES(:texto, :remetente, :data)
+                `)
+                const dbResp = query2.run({
+                    ':texto': body.texto,
+                    ':remetente': body.remetente,
+                    ':data': body.data
+                })
+                return Response.json({
+                    "message": "deu boa garoteaaaaaa!",
+                    dbResp
+                })
+            },
         },
 
-        "/coisa/:id": {
-            GET: () => Response.json({}, { status: 501 }),
-            PUT: () => Response.json({}, { status: 501 }),
-            DELETE: () => Response.json({}, { status: 501 }),
+        "/mensagem/:id": {
+              GET: (req) => {
+                const id = req.params.id
+                const query2 = db.query(`SELECT * FROM mensagem WHERE id=:id`)
+                const data = query2.get({ ':id': id })
+                return Response.json(data)
+            },
+
+            PUT: async(req) => {
+                const body = await req.body.json()
+                const query2 = db.query(`UPDATE mensagem SET texto = :texto, remetente = :remetente, data = :data WHERE id = :id`)
+                const dbResp = query2.run({
+                    ':texto': body.texto,
+                    ':remetente': body.remetente,
+                    ':data': body.data,
+                    ':id': req.params.id
+                })
+                return Response.json(dbResp)
+            },
+
+            DELETE: (req) => {
+                const query2 = db.query(`DELETE FROM mensagem WHERE id=:id`)
+                const data = query2.run({ ':id': req.params.id })
+                return Response.json(data)
+            },
         },
     }
 })
