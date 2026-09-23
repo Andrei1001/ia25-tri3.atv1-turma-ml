@@ -71,15 +71,51 @@ const srv = Bun.serve({
             },
 
             PUT: async(req) => {
-                const body = await req.body.json()
-                const query = db.query(`UPDATE users SET username = :username, email = :email, password_hash = :password WHERE id = :id`)
-                const dbResp = query.run({
-                    ':username': body.username,
-                    ':email': body.email,
-                    ':password': body.password,
-                    ':id': req.params.id
-                })
-                return Response.json(dbResp)
+                   let body
+                try {
+                    body = await req.body.json()
+                } catch (error: any) {
+                    return Response.json({
+                        message: "JSON mal formado",
+                        parseError: error
+                    }, { status: 400 })
+                }
+                if (!body.username)
+                    return Response.json({ message: "Falta da informação: username" }, { status: 400 })
+                if (!body.email)
+                    return Response.json({ message: "Falta da informação: email" }, { status: 400 })
+                if (!body.password)
+                    return Response.json({ message: "Falta da informação: password" }, { status: 400 })
+                 if (!req.params.id)
+                    return Response.json({ message: "Falta da informação: password" }, { status: 400 })
+                const query = db.query(`
+                    UPDATE users SET username=:username, email=:email, password_hash=:password WHERE id=:id
+                `)
+                try {
+                    const dbResp = query.run({
+                        ':username': body.username,
+                        ':email': body.email,
+                        ':password': body.password,
+                        ':id': req.params.id
+
+                    })
+                    return Response.json({
+                        "message": "deu boa garote!",
+                        dbResp
+                    })
+                } catch (e: any) {
+                    if (e.code == "SQLITE_CONSTRAINT_UNIQUE") {
+                        return Response.json({
+                            message: "Username e Email precisam ser únicos",
+                            code: "UNIQUE:CONSTRAINT"
+                        }, { status: 400 })
+                    }
+                    
+                    return Response.json({
+                        message: "Erro ao inserir no banco de dados",
+                        dbError: e
+                    }, { status: 500 })
+                }
             },
 
             DELETE: (req) => {
