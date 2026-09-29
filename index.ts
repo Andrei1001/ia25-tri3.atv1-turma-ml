@@ -6,10 +6,13 @@
 // [D]elete   delete             delete
 
 import { db } from "./db"
+import frontend from "./index.html"
 
 const srv = Bun.serve({
     port: 3000,
     routes: {
+        "/": frontend,
+
         "/user": {
             GET: () => {
                 const query = db.query(`SELECT * FROM users`)
@@ -20,7 +23,7 @@ const srv = Bun.serve({
             POST: async (req) => {
                 let body
                 try {
-                    body = await req.body.json()
+                    body = await req.body?.json()
                 } catch (error: any) {
                     return Response.json({
                         message: "JSON mal formado",
@@ -73,7 +76,7 @@ const srv = Bun.serve({
             PUT: async(req) => {
                    let body
                 try {
-                    body = await req.body.json()
+                    body = await req.body?.json()
                 } catch (error: any) {
                     return Response.json({
                         message: "JSON mal formado",
@@ -133,7 +136,7 @@ const srv = Bun.serve({
             },
 
             POST: async (req) => {
-                const body = await req.body.json()
+                const body = await req.body?.json()
                 const query2 = db.query(`
                     INSERT INTO mensagem(texto, remetente, data)
                     VALUES(:texto, :remetente, :data)
@@ -159,7 +162,7 @@ const srv = Bun.serve({
             },
 
             PUT: async(req) => {
-                const body = await req.body.json()
+                const body = await req.body?.json()
                 const query2 = db.query(`UPDATE mensagem SET texto = :texto, remetente = :remetente, data = :data WHERE id = :id`)
                 const dbResp = query2.run({
                     ':texto': body.texto,
