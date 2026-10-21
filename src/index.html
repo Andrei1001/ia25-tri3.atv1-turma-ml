@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <ul></ul>
+     <ul></ul>
 
     <form>
         <input type="text" name="nome" placeholder="nome">
@@ -47,7 +47,216 @@
             alert("DEU RUIM, E EU NÃO SEI O QUE FOI!")
         })
 
-    </script>
+    </script> 
+
+
+    
 </body>
 
-</html>
+</html> -->
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo</title>
+</head>
+
+<body>
+     <ul></ul>
+
+    <form>
+        <input type="text" name="nome" placeholder="nome">
+        <input type="text" name="email" placeholder="email">
+        <button>cadastrar</button>
+    </form>
+    
+    <script>
+        const lista = document.querySelector("ul")
+        const form = document.querySelector("form")
+
+        async function init() {
+            const response = await fetch("/cliente")
+            const body = await response.json()
+            body.forEach(cliente => {
+                lista.innerHTML += `<li>${cliente.nome}</li>`
+            })
+        }
+
+        init()
+
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault()
+            const response = await fetch("/cliente", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    nome: form.nome.value,
+                    email: form.email.value
+                })
+            })
+            if (response.ok) {
+                lista.innerHTML += `<li>${form.nome.value}</li>` 
+                form.reset()
+                return
+            }
+            alert("DEU RUIM, E EU NÃO SEI O QUE FOI!")
+        })
+
+    </script> 
+
+
+    
+</body>
+
+</html> -->
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo</title>
+</head>
+
+<body>
+     <ul></ul>
+
+    <form>
+        <input type="text" name="nome" placeholder="nome">
+        <input type="text" name="email" placeholder="email">
+        <button>cadastrar</button>
+    </form>
+    
+    <script>
+        const lista = document.querySelector("ul")
+        const form = document.querySelector("form")
+
+        async function init() {
+            const response = await fetch("/cliente")
+            const body = await response.json()
+            body.forEach(cliente => {
+                lista.innerHTML += `<li>${cliente.nome}</li>`
+            })
+        }
+
+        init()
+
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault()
+            const response = await fetch("/cliente", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    nome: form.nome.value,
+                    email: form.email.value
+                })
+            })
+            if (response.ok) {
+                lista.innerHTML += `<li>${form.nome.value}</li>` 
+                form.reset()
+                return
+            }
+            alert("DEU RUIM, E EU NÃO SEI O QUE FOI!")
+        })
+
+    </script> 
+
+
+    
+</body>
+
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="escolha">
+        <button class="abacate">Login</button>
+        <button class="morango">Cadastro</button>
+        <form class="login">
+            <input type="text" name="username" placeholder="email de login">
+            <input type="password" name="password" placeholder="senha">
+            <button>entrar</button>
+        </form>
+
+        <form class="cadastrar">
+            <input type="text" name="username" placeholder="coloque um novo email">
+            <input type="password" name="password" placeholder="senha">
+            <button>cadastrar</button>
+        </form>
+    </div>
+
+
+    <script>
+
+        // const login = document.querySelector('abacate')
+        // const cadastro = document.querySelector('morango')
+        // const botao1 = document.querySelector('Login')
+        // const botao2 = document.querySelector('cadastrar')
+
+
+        // login.addEventListener('click', function(event){
+
+        // })
+
+        const frmLogin = document.querySelector('.login')
+        frmLogin.addEventListener('submit', async (ev) => {
+            ev.preventDefault()
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify({
+                    "username": frmLogin.username.value,
+                    "password": frmLogin.password.value
+                })
+            })
+        })
+
+
+        const frmCadastro = document.querySelector('.cadastrar')
+        frmCadastro.addEventListener('submit', async (ev) => {
+            ev.preventDefault()
+            const response = await fetch("/user", {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify({
+                    "username": frmCadastro.username.value,
+                    "password": frmCadastro.password.value
+                })
+
+            })
+            return Response.json("deu boa")
+
+            if (response.status == 404)
+                return alert("Usuário não encontrado")
+
+            if (response.status == 401)
+                return alert("Senha incorreta")
+
+            if (response.ok) {
+                window.location.href = "/home"
+                return
+            }
+
+            alert("Não deveria chegar aqui")
+        })
+
+    </script>
+
+</body>
+
+</html
