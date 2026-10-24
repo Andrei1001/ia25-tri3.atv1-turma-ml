@@ -175,18 +175,26 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+
+    <style>
+        .cadastrar {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
     <div class="escolha">
-        <button class="abacate">Login</button>
-        <button class="morango">Cadastro</button>
+        <button type="button" class="abacate">Login</button>
+        <button type="button" class="morango">Cadastro</button>
+
         <form class="login">
             <input type="text" name="username" placeholder="email de login">
             <input type="password" name="password" placeholder="senha">
@@ -200,46 +208,34 @@
         </form>
     </div>
 
-
     <script>
-
-        // const login = document.querySelector('abacate')
-        // const cadastro = document.querySelector('morango')
-        // const botao1 = document.querySelector('Login')
-        // const botao2 = document.querySelector('cadastrar')
-
-
-        // login.addEventListener('click', function(event){
-
-        // })
+        const login = document.querySelector('.abacate')
+        const cadastro = document.querySelector('.morango')
 
         const frmLogin = document.querySelector('.login')
+        const frmCadastro = document.querySelector('.cadastrar')
+
+        login.addEventListener('click', () => {
+            frmLogin.style.display = 'block'
+            frmCadastro.style.display = 'none'
+        })
+
+        cadastro.addEventListener('click', () => {
+            frmLogin.style.display = 'none'
+            frmCadastro.style.display = 'block'
+        })
+
         frmLogin.addEventListener('submit', async (ev) => {
             ev.preventDefault()
+
             const response = await fetch("/login", {
                 method: "POST",
                 headers: { "Content-type": "application/json" },
                 body: JSON.stringify({
-                    "username": frmLogin.username.value,
-                    "password": frmLogin.password.value
+                    username: frmLogin.username.value,
+                    password: frmLogin.password.value
                 })
             })
-        })
-
-
-        const frmCadastro = document.querySelector('.cadastrar')
-        frmCadastro.addEventListener('submit', async (ev) => {
-            ev.preventDefault()
-            const response = await fetch("/user", {
-                method: "POST",
-                headers: { "Content-type": "application/json" },
-                body: JSON.stringify({
-                    "username": frmCadastro.username.value,
-                    "password": frmCadastro.password.value
-                })
-
-            })
-            return Response.json("deu boa")
 
             if (response.status == 404)
                 return alert("Usuário não encontrado")
@@ -252,11 +248,33 @@
                 return
             }
 
-            alert("Não deveria chegar aqui")
+            alert("Erro ao fazer login")
         })
 
-    </script>
+        frmCadastro.addEventListener('submit', async (ev) => {
+            ev.preventDefault()
 
+            const response = await fetch("/user", {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify({
+                    username: frmCadastro.username.value,
+                    password: frmCadastro.password.value
+                })
+            })
+
+            if (response.ok) {
+                alert("Cadastro realizado com sucesso!")
+                frmCadastro.reset()
+
+                frmCadastro.style.display = 'none'
+                frmLogin.style.display = 'block'
+                return
+            }
+
+            alert("Erro ao cadastrar")
+        })
+    </script>
 </body>
 
-</html
+</html>
